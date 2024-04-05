@@ -20,6 +20,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+if(isset($_POST['delete'])) {
+    $idProduct = $_POST['delete'];
+    $sql_delete = "DELETE FROM productes WHERE id = $idProduct";
+    if ($conn->query($sql_delete) === FALSE) {
+         echo "Error al eliminar el producto: " . $conn->error;
+    } 
+}
+
+
 $sql = "SELECT * FROM productes";
 
 $result = $conn->query($sql);
@@ -70,7 +79,13 @@ $conn->close();
                                         <th scope="row">' . $array[$i]["id"] . '</th>
                                         <td>' . $array[$i]["nom"] . '</td>
                                         <td><p idProd="' . $array[$i]["id"] . '" class="btnEdit btn btn-outline-info">Edit</p></td>
-                                        <td><a href="" idProdDel="' . $array[$i]["id"] . '" class="btnDelet btn btn-outline-danger">Remove</a></td>
+                                        <td>
+                                            
+                                            <form action="'.$_SERVER['PHP_SELF'].'" method="POST">
+                                                <input type="hidden" name="delete" value="' . $array[$i]["id"] . '">
+                                                <button type="submit" class="btn btn-outline-danger">Remove</button>
+                                            </form>
+                                        </td>
                                     </tr>';
                         }  
                     ?>
@@ -104,29 +119,7 @@ $conn->close();
             })
         })
 
-        let btnDel = document.querySelectorAll(".btnDelet");
-        btnDel.forEach(el=>{
-            el.addEventListener("click", function(){
-                console.log("hola")
-                let formData = new FormData();
-                formData.append("id", this.getAttribute("idProdDel"));
-
-                let options = {
-                        method: 'POST',
-                        body: formData
-                    }
-
-                fetch("ex2delete.php", options)
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                    document.getElementById("nomProducte").value = data.nom;
-                    document.getElementById("addEdit").value = data.addEdit;
-                })
-                .catch((error) => {});
-
-            })
-        })
+        
     </script>
 </body>
 </html>
